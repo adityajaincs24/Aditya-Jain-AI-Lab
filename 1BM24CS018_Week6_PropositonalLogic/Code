@@ -1,0 +1,33 @@
+def entails(kb, query, symbols):
+    n = len(symbols)
+
+    for i in range(2 ** n):
+        model = {}
+
+        for j in range(n):
+            model[symbols[j]] = bool(i & (1 << j))
+
+        kb_true = all(rule(model) for rule in kb)
+
+        if kb_true and not query(model):
+            return False
+
+    return True
+
+
+symbols = ['P', 'Q']
+
+kb = [
+    lambda m: not m['P'] or m['Q'],
+    lambda m: m['P']
+]
+
+query = lambda m: m['Q']
+
+print("Knowledge Base: (P -> Q) AND P")
+print("Query: Q")
+
+if entails(kb, query, symbols):
+    print("KB entails Q")
+else:
+    print("KB does not entail Q")
